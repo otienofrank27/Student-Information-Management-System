@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "hash-password": "node ../scripts/hash-password.js",
+    "test": "node --test auth.test.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

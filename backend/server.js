@@ -6,6 +6,7 @@ import { promisify } from 'node:util';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { clearCookie, createSessionCookie, apiRateLimit, loginRateLimit, readSession, requireAdmin, requireSession, verifyPassword } from './auth.js';
 
 const execFileAsync = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -13,13 +14,66 @@ const BACKUP_DIR = path.resolve(__dirname, '../backups');
 const PORT = Number(process.env.PORT || 3001);
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+app.disable('x-powered-by');
+const allowedOrigin = process.env.CORS_ORIGIN;
+app.use(cors({
+  origin: allowedOrigin ? allowedOrigin.split(',').map(value => value.trim()).filter(Boolean) : false,
+  credentials: true
+}));
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com; font-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
+  if (process.env.NODE_ENV === 'production') res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
+app.use(express.json({ limit: '32kb' }));
+
+if (!process.env.AUTH_USERNAME || !process.env.AUTH_PASSWORD_HASH || !process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
+  throw new Error('Set AUTH_USERNAME, a generated scrypt AUTH_PASSWORD_HASH, and a random SESSION_SECRET of at least 32 characters.');
+}
+if (!/^scrypt\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(process.env.AUTH_PASSWORD_HASH) || process.env.SESSION_SECRET.startsWith('REPLACE_')) {
+  throw new Error('AUTH_PASSWORD_HASH or SESSION_SECRET still contains an invalid placeholder value.');
+}
+
+app.post('/api/auth/login', loginRateLimit, async (req, res) => {
+  try {
+    const username = String(req.body?.username || '');
+    const password = String(req.body?.password || '');
+    if (username !== process.env.AUTH_USERNAME || !(await verifyPassword(password, process.env.AUTH_PASSWORD_HASH))) {
+      return res.status(401).json({ ok: false, error: 'Invalid username or password.' });
+    }
+    res.setHeader('Set-Cookie', createSessionCookie(username, 'admin'));
+    res.json({ ok: true, user: { username, role: 'admin' } });
+  } catch (err) {
+    console.error('Login failed:', err);
+    res.status(500).json({ ok: false, error: 'Unable to sign in.' });
+  }
+});
+
+app.get('/api/auth/session', (req, res) => {
+  const user = readSession(req);
+  if (!user) return res.status(401).json({ ok: false, error: 'Authentication required.' });
+  res.json({ ok: true, user: { username: user.sub, role: user.role } });
+});
+
+app.post('/api/auth/logout', (_req, res) => {
+  clearCookie(res);
+  res.json({ ok: true });
+});
+
+app.use('/api', apiRateLimit, (req, res, next) => {
+  if (req.path === '/health' || req.path === '/auth/login' || req.path === '/auth/session' || req.path === '/auth/logout') return next();
+  return requireSession(req, res, next);
+});
 
 function sendError(res, err) {
-  const message = err.sqlMessage || err.message || 'Unexpected database error';
-  const status = /not found/i.test(message) ? 404 : 400;
-  res.status(status).json({ ok: false, error: message });
+  console.error('API operation failed:', err);
+  const status = err.statusCode || 500;
+  res.status(status).json({ ok: false, error: status < 500 ? (err.publicMessage || 'Request could not be completed.') : 'An internal server error occurred.' });
 }
 
 app.get('/api/health', async (_req, res) => {
@@ -358,7 +412,7 @@ app.post('/api/fees', async (req, res) => {
   }
 });
 
-app.get('/api/admin/objects', async (_req, res) => {
+app.get('/api/admin/objects', requireAdmin, async (_req, res) => {
   try {
     const [tables] = await adminPool.query(
       `SELECT TABLE_NAME, TABLE_TYPE, ENGINE, TABLE_ROWS, TABLE_COMMENT
@@ -391,7 +445,7 @@ app.get('/api/admin/objects', async (_req, res) => {
   }
 });
 
-app.post('/api/admin/backup', async (_req, res) => {
+app.post('/api/admin/backup', requireAdmin, async (_req, res) => {
   try {
     await fs.mkdir(BACKUP_DIR, { recursive: true });
     const stamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -414,7 +468,7 @@ app.post('/api/admin/backup', async (_req, res) => {
   }
 });
 
-app.get('/api/admin/backups', async (_req, res) => {
+app.get('/api/admin/backups', requireAdmin, async (_req, res) => {
   try {
     await fs.mkdir(BACKUP_DIR, { recursive: true });
     const files = await fs.readdir(BACKUP_DIR);
@@ -430,13 +484,14 @@ app.get('/api/admin/backups', async (_req, res) => {
   }
 });
 
-app.post('/api/admin/restore', async (req, res) => {
+app.post('/api/admin/restore', requireAdmin, async (req, res) => {
   try {
     const name = path.basename(String(req.body.file || ''));
-    if (!name.endsWith('.sql')) {
+    if (!/^usims_[A-Za-z0-9_.-]+\\.sql$/.test(name)) {
       return res.status(400).json({ ok: false, error: 'Invalid backup file' });
     }
-    const file = path.join(BACKUP_DIR, name);
+    const file = path.resolve(BACKUP_DIR, name);
+    if (!file.startsWith(BACKUP_DIR + path.sep)) return res.status(400).json({ ok: false, error: 'Invalid backup file' });
     await fs.access(file);
     await execFileAsync('bash', [
       '-c',

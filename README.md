@@ -202,9 +202,20 @@ mysql -u root --socket=/run/mysqld/mysqld.sock < database/10_programme_catalogue
 
 TCP clients may omit `--socket` and pass `-h 127.0.0.1` instead.
 
-### 2. Configure credentials
+### 2. Configure credentials and administrator access
 
-Copy the root `.env.example` to `.env` and set unique, randomly generated database credentials. Never commit `.env`. Create the `sims_app`, `sims_admin`, and `sims_lecturer` database accounts securely before running `database/06_security.sql`; that grants script contains no passwords. The API fails at startup if either application or administrator credentials are missing.
+Copy the root `.env.example` to `.env` and set unique, randomly generated database credentials. Never commit `.env`. Create the `sims_app`, `sims_admin`, and `sims_lecturer` database accounts securely before running `database/06_security.sql`; that grants script contains no passwords.
+
+Generate the administrator password hash and session signing secret:
+
+```bash
+node scripts/hash-password.js "use-a-unique-password-at-least-14-characters"
+openssl rand -hex 32
+```
+
+Put the hash output in `AUTH_PASSWORD_HASH`, choose an `AUTH_USERNAME`, and put the random output in `SESSION_SECRET`. Never store the plain administrator password in source control. The API refuses to start if these authentication settings or database credentials are missing. Sign-in uses an eight-hour HttpOnly, SameSite=Strict session cookie; login attempts are rate limited. In production, serve the app over HTTPS so the cookie is Secure.
+
+The registry API requires authentication. The database vault endpoints additionally require the administrator role. Configure `CORS_ORIGIN` only when the frontend is hosted on a separate origin; list exact trusted origins separated by commas. Same-origin hosting is preferred.
 
 ### 3. Install application dependencies
 
@@ -237,6 +248,16 @@ bash start.sh
 No default passwords are provided. Set unique credentials outside source control and rotate any credentials that were previously committed.
 
 ---
+
+## Security controls
+
+- All registry API routes require a signed, expiring administrator session; the health endpoint exposes only database reachability.
+- Login uses scrypt password hashes, HttpOnly / SameSite=Strict cookies, and per-IP login throttling.
+- Administrative database-inspection, backup, and restore endpoints explicitly require the administrator role.
+- API request bodies are size-limited; API errors do not return SQL messages or stack details.
+- CORS is disabled by default and can be enabled only for exact origins using `CORS_ORIGIN`; same-origin hosting is recommended.
+- Responses include browser security headers and API responses are marked non-cacheable.
+- These controls are not a substitute for HTTPS, operating-system hardening, database network restrictions, tested backups, and a security review before handling real student data.
 
 ## Application surfaces
 

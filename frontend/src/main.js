@@ -12,6 +12,8 @@ const PAGES = [
 ];
 
 const state = {
+  authenticated: false,
+  user: null,
   view: 'home',
   page: 'dashboard',
   message: '',
@@ -45,6 +47,7 @@ function esc(value) {
 async function api(path, options = {}) {
   const res = await fetch(path, {
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    credentials: 'same-origin',
     ...options
   });
   const data = await res.json().catch(() => ({ ok: false, error: 'Invalid response' }));
@@ -166,6 +169,7 @@ function header(active) {
       <div class="header-cta">
         <button class="btn ghost" data-view="academics">Prospectus</button>
         <button class="btn copper" data-view="registry">Enter registry</button>
+        <button class="btn ghost" id="logout">Sign out</button>
       </div>
     </header>`;
 }
@@ -773,7 +777,30 @@ function modalHtml() {
     </div>`;
 }
 
+function renderLogin() {
+  return `
+    <main class="section" style="max-width:520px;margin:10vh auto">
+      <section class="card" style="padding:32px">
+        <div class="kicker" style="color:var(--copper)">Secure staff access</div>
+        <h2 style="font-family:var(--serif);margin:10px 0">Crestwood Registry</h2>
+        <p style="color:var(--muted)">Sign in with your authorised administrator credentials to access student, examination, fee and database records.</p>
+        <form id="login-form">
+          <label style="display:block;margin:18px 0 12px">Username<input name="username" autocomplete="username" required /></label>
+          <label style="display:block;margin:12px 0 18px">Password<input name="password" type="password" autocomplete="current-password" required /></label>
+          <button class="btn copper" type="submit">Sign in securely</button>
+        </form>
+        <p style="color:var(--muted);font-size:12px;margin-top:18px">Sessions expire automatically after eight hours. Do not share your login credentials.</p>
+      </section>
+    </main>`;
+}
+
 function render() {
+  if (!state.authenticated) {
+    app.innerHTML = `${renderLogin()}
+      <div class="toast-stack">${state.error ? `<div class="toast error">${esc(state.error)}</div>` : ''}</div>`;
+    bind();
+    return;
+  }
   let body = '';
   if (state.view === 'home') body = renderHome();
   else if (state.view === 'academics') body = renderAcademics();
@@ -807,6 +834,40 @@ function studentFields(s = {}) {
 }
 
 function bind() {
+  const loginForm = app.querySelector('#login-form');
+  if (loginForm) {
+    loginForm.onsubmit = async (ev) => {
+      ev.preventDefault();
+      const values = Object.fromEntries(new FormData(loginForm).entries());
+      try {
+        const result = await api('/api/auth/login', { method: 'POST', body: JSON.stringify(values) });
+        state.authenticated = true;
+        state.user = result.user;
+        state.error = '';
+        await loadCore();
+        state.dashboard = await api('/api/dashboard');
+        state.courses = (await api('/api/courses')).data;
+        render();
+      } catch (err) {
+        state.error = err.message;
+        render();
+      }
+    };
+  }
+  const logout = app.querySelector('#logout');
+  if (logout) logout.onclick = async () => {
+    try { await api('/api/auth/logout', { method: 'POST', body: '{}' }); } catch {}
+    state.authenticated = false;
+    state.user = null;
+    state.dashboard = null;
+    state.students = [];
+    state.fees = [];
+    state.admin = null;
+    state.error = '';
+    state.view = 'home';
+    render();
+  };
+
   app.querySelectorAll('[data-view]').forEach((btn) => {
     btn.onclick = async () => {
       state.view = btn.dataset.view;
@@ -1003,13 +1064,16 @@ function bind() {
 }
 
 async function boot() {
-  render();
   try {
+    const session = await api('/api/auth/session');
+    state.authenticated = true;
+    state.user = session.user;
     await loadCore();
     state.dashboard = await api('/api/dashboard');
     state.courses = (await api('/api/courses')).data;
-  } catch (err) {
-    state.error = err.message;
+  } catch {
+    state.authenticated = false;
+    state.user = null;
   }
   render();
 }
