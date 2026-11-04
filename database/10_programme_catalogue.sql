@@ -1,5 +1,5 @@
 -- =============================================================================
--- Crestwood University academic catalogue
+-- USIMS academic programme catalogue
 -- 104 programmes · 6 credential levels · 5 schools
 -- =============================================================================
 USE usims;
