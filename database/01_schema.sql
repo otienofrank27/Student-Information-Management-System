@@ -1,5 +1,5 @@
 -- =============================================================================
--- Crestwood University Student Information Management System (USIMS)
+-- University Student Information Management System (USIMS) (USIMS)
 -- Schema: 7 tables in Third Normal Form (3NF)
 -- Engine: InnoDB | Charset: utf8mb4
 -- =============================================================================
