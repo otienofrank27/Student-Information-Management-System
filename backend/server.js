@@ -6,7 +6,6 @@ import { promisify } from 'node:util';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { clearCookie, createSessionCookie, loginRateLimit, readSession, requireAdmin, requireSession, verifyPassword } from './auth.js';
 
 const execFileAsync = promisify(execFile);
