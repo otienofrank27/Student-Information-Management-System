@@ -155,9 +155,9 @@ function header(active) {
   return `
     <header class="site-header">
       <div class="brand-lockup">
-        <img class="crest" src="/crest.svg" alt="Crestwood crest" />
+        <img class="crest" src="/crest.svg" alt="University crest" />
         <div>
-          <h1>Crestwood University</h1>
+          <h1>University Student Information Management System</h1>
           <small>Registry &amp; records</small>
         </div>
       </div>
@@ -177,7 +177,7 @@ function header(active) {
 function footer() {
   return `
     <footer class="footnote">
-      <span>Crestwood University · Academic year 2025/2026 · Normalised to 3NF on MariaDB</span>
+      <span>University Student Information Management System · Academic year 2025/2026 · Normalised to 3NF on MariaDB</span>
       <span>Student numbers follow CU####### · Marks constrained 0–100 by trigger</span>
     </footer>`;
 }
@@ -191,7 +191,7 @@ function renderHome() {
       <div class="hero-copy">
         <div class="kicker">Est. in the highlands · Official registry</div>
         <h2>A living record of every scholar, seat, and seal.</h2>
-        <p>Crestwood offers 104 programmes across six credential levels and five schools. The registry keeps identities, enrolments, examinations and bursary in one disciplined ledger.</p>
+        <p>The university offers 104 programmes across six credential levels and five schools. The registry keeps identities, enrolments, examinations and bursary in one disciplined ledger.</p>
         <div class="hero-actions">
           <button class="btn gold" data-view="registry">Open the staff registry</button>
           <button class="btn ghost" data-view="academics" style="color:#f8efd8;border-color:rgba(248,239,216,0.35)">Browse schools</button>
@@ -782,7 +782,7 @@ function renderLogin() {
     <main class="section" style="max-width:520px;margin:10vh auto">
       <section class="card" style="padding:32px">
         <div class="kicker" style="color:var(--copper)">Secure staff access</div>
-        <h2 style="font-family:var(--serif);margin:10px 0">Crestwood Registry</h2>
+        <h2 style="font-family:var(--serif);margin:10px 0">USIMS Registry</h2>
         <p style="color:var(--muted)">Sign in with your authorised administrator credentials to access student, examination, fee and database records.</p>
         <form id="login-form">
           <label style="display:block;margin:18px 0 12px">Username<input name="username" autocomplete="username" required /></label>
