@@ -11,27 +11,27 @@ INSERT INTO departments (department_code, department_name, faculty) VALUES
 ('HS',  'Nursing and Clinical Sciences',       'School of Health Sciences');
 
 INSERT INTO lecturers (staff_number, first_name, last_name, email, phone, title, department_id, hire_date) VALUES
-('STF1001', 'Amara',  'Okello',  'amara.okello@crestwood.edu',  '+256700111001', 'Senior Lecturer', 1, '2016-02-01'),
-('STF1002', 'Daniel', 'Mensah',  'daniel.mensah@crestwood.edu', '+256700111002', 'Lecturer',        1, '2019-08-15'),
-('STF1003', 'Fatima', 'Hassan',  'fatima.hassan@crestwood.edu', '+256700111003', 'Professor',       2, '2012-01-10'),
-('STF1004', 'Peter',  'Njoroge', 'peter.njoroge@crestwood.edu', '+256700111004', 'Lecturer',        3, '2020-03-20'),
-('STF1005', 'Grace',  'Banda',   'grace.banda@crestwood.edu',   '+256700111005', 'Senior Lecturer', 4, '2015-09-01'),
-('STF1006', 'Lillian','Adeyemi', 'lillian.adeyemi@crestwood.edu','+256700111006','Lecturer',        5, '2018-11-12');
+('STF1001', 'Amara',  'Okello',  'amara.okello@usims.edu',  '+256700111001', 'Senior Lecturer', 1, '2016-02-01'),
+('STF1002', 'Daniel', 'Mensah',  'daniel.mensah@usims.edu', '+256700111002', 'Lecturer',        1, '2019-08-15'),
+('STF1003', 'Fatima', 'Hassan',  'fatima.hassan@usims.edu', '+256700111003', 'Professor',       2, '2012-01-10'),
+('STF1004', 'Peter',  'Njoroge', 'peter.njoroge@usims.edu', '+256700111004', 'Lecturer',        3, '2020-03-20'),
+('STF1005', 'Grace',  'Banda',   'grace.banda@usims.edu',   '+256700111005', 'Senior Lecturer', 4, '2015-09-01'),
+('STF1006', 'Lillian','Adeyemi', 'lillian.adeyemi@usims.edu','+256700111006','Lecturer',        5, '2018-11-12');
 
 INSERT INTO students (
     student_number, first_name, last_name, email, phone, date_of_birth,
     gender, address, department_id, enrollment_date, status
 ) VALUES
-('CU2024001', 'James',  'Kato',     'james.kato@student.crestwood.edu',     '+256701000001', '2003-04-12', 'Male',   '12 Makerere Hill, Kampala', 1, '2024-08-20', 'Active'),
-('CU2024002', 'Amina',  'Suleiman', 'amina.suleiman@student.crestwood.edu', '+256701000002', '2004-01-08', 'Female', '45 Entebbe Road, Kampala', 1, '2024-08-20', 'Active'),
-('CU2024003', 'Brian',  'Mwangi',   'brian.mwangi@student.crestwood.edu',   '+256701000003', '2002-11-23', 'Male',   '8 Industrial Area, Nairobi', 2, '2023-08-18', 'Active'),
-('CU2024004', 'Chipo',  'Dube',     'chipo.dube@student.crestwood.edu',     '+256701000004', '2003-07-30', 'Female', '22 Samora Ave, Harare',     3, '2024-08-20', 'Active'),
-('CU2024005', 'Kwame',  'Asante',   'kwame.asante@student.crestwood.edu',   '+256701000005', '2001-09-14', 'Male',   '3 Independence Ave, Accra', 2, '2022-08-16', 'Active'),
-('CU2024006', 'Naledi', 'Mokoena',  'naledi.mokoena@student.crestwood.edu', '+256701000006', '2004-03-02', 'Female', '19 Church Street, Pretoria',4, '2024-08-20', 'Active'),
-('CU2024007', 'Omar',   'Farouk',   'omar.farouk@student.crestwood.edu',    '+256701000007', '2003-12-19', 'Male',   '7 Nile Avenue, Khartoum',   5, '2023-08-18', 'Active'),
-('CU2024008', 'Wanjiku','Kamau',    'wanjiku.kamau@student.crestwood.edu',  '+256701000008', '2002-05-27', 'Female', '31 Ngong Road, Nairobi',    1, '2022-08-16', 'Graduated'),
-('CU2024009', 'Tunde',  'Balogun',  'tunde.balogun@student.crestwood.edu',  '+256701000009', '2004-06-11', 'Male',   '14 Marina, Lagos',          3, '2024-08-20', 'Active'),
-('CU2024010', 'Zainab', 'Ibrahim',  'zainab.ibrahim@student.crestwood.edu', '+256701000010', '2003-02-05', 'Female', '9 Independence Way, Kano',  5, '2023-08-18', 'Active');
+('CU2024001', 'James',  'Kato',     'james.kato@student.usims.edu',     '+256701000001', '2003-04-12', 'Male',   '12 Makerere Hill, Kampala', 1, '2024-08-20', 'Active'),
+('CU2024002', 'Amina',  'Suleiman', 'amina.suleiman@student.usims.edu', '+256701000002', '2004-01-08', 'Female', '45 Entebbe Road, Kampala', 1, '2024-08-20', 'Active'),
+('CU2024003', 'Brian',  'Mwangi',   'brian.mwangi@student.usims.edu',   '+256701000003', '2002-11-23', 'Male',   '8 Industrial Area, Nairobi', 2, '2023-08-18', 'Active'),
+('CU2024004', 'Chipo',  'Dube',     'chipo.dube@student.usims.edu',     '+256701000004', '2003-07-30', 'Female', '22 Samora Ave, Harare',     3, '2024-08-20', 'Active'),
+('CU2024005', 'Kwame',  'Asante',   'kwame.asante@student.usims.edu',   '+256701000005', '2001-09-14', 'Male',   '3 Independence Ave, Accra', 2, '2022-08-16', 'Active'),
+('CU2024006', 'Naledi', 'Mokoena',  'naledi.mokoena@student.usims.edu', '+256701000006', '2004-03-02', 'Female', '19 Church Street, Pretoria',4, '2024-08-20', 'Active'),
+('CU2024007', 'Omar',   'Farouk',   'omar.farouk@student.usims.edu',    '+256701000007', '2003-12-19', 'Male',   '7 Nile Avenue, Khartoum',   5, '2023-08-18', 'Active'),
+('CU2024008', 'Wanjiku','Kamau',    'wanjiku.kamau@student.usims.edu',  '+256701000008', '2002-05-27', 'Female', '31 Ngong Road, Nairobi',    1, '2022-08-16', 'Graduated'),
+('CU2024009', 'Tunde',  'Balogun',  'tunde.balogun@student.usims.edu',  '+256701000009', '2004-06-11', 'Male',   '14 Marina, Lagos',          3, '2024-08-20', 'Active'),
+('CU2024010', 'Zainab', 'Ibrahim',  'zainab.ibrahim@student.usims.edu', '+256701000010', '2003-02-05', 'Female', '9 Independence Way, Kano',  5, '2023-08-18', 'Active');
 
 INSERT INTO courses (course_code, course_name, credits, credential_level, department_id, lecturer_id, semester, academic_year) VALUES
 ('CS101', 'Introduction to Programming',     4, 'Bachelor', 1, 1, '1', '2025/2026'),
