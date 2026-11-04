@@ -209,11 +209,11 @@ Copy the root `.env.example` to `.env` and set unique, randomly generated databa
 Generate the administrator password hash and session signing secret:
 
 ```bash
-node scripts/hash-password.js "use-a-unique-password-at-least-14-characters"
+node scripts/hash-password.js
 openssl rand -hex 32
 ```
 
-Put the hash output in `AUTH_PASSWORD_HASH`, choose an `AUTH_USERNAME`, and put the random output in `SESSION_SECRET`. Never store the plain administrator password in source control. The API refuses to start if these authentication settings or database credentials are missing. Sign-in uses an eight-hour HttpOnly, SameSite=Strict session cookie; login attempts are rate limited. In production, serve the app over HTTPS so the cookie is Secure.
+Run the hash utility in an interactive terminal; it prompts for the password without echoing it. Copy the printed `AUTH_PASSWORD_HASH=...` line into `.env`, choose an `AUTH_USERNAME`, and put the random output in `SESSION_SECRET`. Never store the plain administrator password in source control. The API refuses to start if these authentication settings or database credentials are missing. Sign-in uses an eight-hour HttpOnly, SameSite=Strict session cookie; login attempts are rate limited. In production, serve the app over HTTPS so the cookie is Secure.
 
 The registry API requires authentication. The database vault endpoints additionally require the administrator role. Configure `CORS_ORIGIN` only when the frontend is hosted on a separate origin; list exact trusted origins separated by commas. Same-origin hosting is preferred.
 
