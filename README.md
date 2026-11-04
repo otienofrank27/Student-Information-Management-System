@@ -1,10 +1,10 @@
-# Crestwood University Student Information Management System
+# University Student Information Management System (USIMS)
 
 An advanced database management system project for the design and implementation of a University Student Information Management System (USIMS).
 
 The system stores student records, academic programmes, enrolment, examination results, and fee payments in a normalised MariaDB schema. A staff registry and public campus site sit on top of stored procedures, triggers, views, indexes, role-based security, and logical backup and recovery.
 
-**Institution:** Crestwood University (demonstration)
+**Institution:** University Student Information Management System (USIMS)
 **Duration:** 14 days
 **DBMS:** MariaDB 10.11 / MySQL
 **Application:** Node.js Express API and Vite frontend
@@ -13,7 +13,7 @@ The system stores student records, academic programmes, enrolment, examination r
 
 ## Academic structure
 
-Crestwood University offers **104 academic programmes** across **six credential levels** and **five schools**.
+The university offers **104 academic programmes** across **six credential levels** and **five schools**.
 
 | Credential | Programmes |
 | --- | ---: |
