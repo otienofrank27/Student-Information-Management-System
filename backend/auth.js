@@ -62,6 +62,9 @@ export function loginRateLimit(req, res, next) {
   const current = loginAttempts.get(key);
   if (!current || now - current.started > 15 * 60 * 1000) {
     loginAttempts.set(key, { started: now, count: 1 });
+    if (loginAttempts.size > 5000) {
+      for (const [ip, item] of loginAttempts) if (now - item.started > 15 * 60 * 1000) loginAttempts.delete(ip);
+    }
     return next();
   }
   if (current.count >= 8) {
