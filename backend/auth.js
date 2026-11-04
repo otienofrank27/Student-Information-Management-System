@@ -4,6 +4,7 @@ const scrypt = promisify(scryptCallback);
 const COOKIE = 'usims_session';
 const SESSION_SECONDS = 8 * 60 * 60;
 const loginAttempts = new Map();
+const apiRequests = new Map();
 
 function safeEqual(a, b) {
   const left = Buffer.from(String(a));
@@ -36,6 +37,24 @@ export function readSession(req) {
     const session = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
     return session.sub && session.exp > Math.floor(Date.now() / 1000) ? session : null;
   } catch { return null; }
+}
+export function apiRateLimit(req, res, next) {
+  const key = req.ip || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const current = apiRequests.get(key);
+  if (!current || now - current.started > 60 * 1000) {
+    apiRequests.set(key, { started: now, count: 1 });
+    if (apiRequests.size > 5000) {
+      for (const [ip, item] of apiRequests) if (now - item.started > 60 * 1000) apiRequests.delete(ip);
+    }
+    return next();
+  }
+  if (current.count >= 300) {
+    res.setHeader('Retry-After', '60');
+    return res.status(429).json({ ok: false, error: 'Request limit exceeded. Try again shortly.' });
+  }
+  current.count += 1;
+  next();
 }
 export function loginRateLimit(req, res, next) {
   const key = req.ip || req.socket.remoteAddress || 'unknown';
