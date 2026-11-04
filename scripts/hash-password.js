@@ -43,4 +43,4 @@ if (password.length < 14) {
 }
 const salt = randomBytes(16).toString('hex');
 const hash = scryptSync(password, salt, 64).toString('hex');
-stdout.write(`AUTH_PASSWORD_HASH=scrypt$${salt}$${hash}\n`);
+stdout.write(`AUTH_PASSWORD_HASH='scrypt$${salt}$${hash}'\n`);
