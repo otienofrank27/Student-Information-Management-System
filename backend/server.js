@@ -6,7 +6,7 @@ import { promisify } from 'node:util';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { clearCookie, createSessionCookie, loginRateLimit, readSession, requireAdmin, requireSession, verifyPassword } from './auth.js';
+import { clearCookie, createSessionCookie, apiRateLimit, loginRateLimit, readSession, requireAdmin, requireSession, verifyPassword } from './auth.js';
 
 const execFileAsync = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,17 +21,22 @@ app.use(cors({
   credentials: true
 }));
 app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'no-referrer');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
   if (process.env.NODE_ENV === 'production') res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   next();
 });
 app.use(express.json({ limit: '32kb' }));
 
 if (!process.env.AUTH_USERNAME || !process.env.AUTH_PASSWORD_HASH || !process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
-  throw new Error('Set AUTH_USERNAME, AUTH_PASSWORD_HASH and a SESSION_SECRET of at least 32 characters.');
+  throw new Error('Set AUTH_USERNAME, a generated scrypt AUTH_PASSWORD_HASH, and a random SESSION_SECRET of at least 32 characters.');
+}
+if (!/^scrypt\\$[a-f0-9]{32}\\$[a-f0-9]{128}$/.test(process.env.AUTH_PASSWORD_HASH) || process.env.SESSION_SECRET.startsWith('REPLACE_')) {
+  throw new Error('AUTH_PASSWORD_HASH or SESSION_SECRET still contains an invalid placeholder value.');
 }
 
 app.post('/api/auth/login', loginRateLimit, async (req, res) => {
@@ -60,7 +65,7 @@ app.post('/api/auth/logout', (_req, res) => {
   res.json({ ok: true });
 });
 
-app.use('/api', (req, res, next) => {
+app.use('/api', apiRateLimit, (req, res, next) => {
   if (req.path === '/health' || req.path === '/auth/login' || req.path === '/auth/session' || req.path === '/auth/logout') return next();
   return requireSession(req, res, next);
 });
