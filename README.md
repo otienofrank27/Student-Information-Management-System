@@ -1,5 +1,42 @@
 # University Student Information Management System (USIMS)
 
+<div align="center">
+
+  <p><strong>A database-driven university information platform for student records, academic programmes, enrolment, examinations, and fee management.</strong></p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Database-MariaDB%2010.11-003545?style=for-the-badge&logo=mariadb&logoColor=white" alt="MariaDB 10.11" />
+    <img src="https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js and Express" />
+    <img src="https://img.shields.io/badge/Frontend-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite frontend" />
+    <img src="https://img.shields.io/badge/Architecture-REST%20API-2563EB?style=for-the-badge&logo=fastapi&logoColor=white" alt="REST API architecture" />
+  </p>
+
+  <p>
+    <a href="https://github.com/otienofrank27/University-Student-Information-Management-System"><img src="https://img.shields.io/github/stars/otienofrank27/University-Student-Information-Management-System?style=flat-square&logo=github" alt="GitHub stars" /></a>
+    <a href="https://github.com/otienofrank27/University-Student-Information-Management-System/network/members"><img src="https://img.shields.io/github/forks/otienofrank27/University-Student-Information-Management-System?style=flat-square&logo=github" alt="GitHub forks" /></a>
+    <a href="https://github.com/otienofrank27/University-Student-Information-Management-System/commits/main"><img src="https://img.shields.io/github/last-commit/otienofrank27/University-Student-Information-Management-System?style=flat-square" alt="Last commit" /></a>
+  </p>
+
+</div>
+
+> **Project overview:** USIMS demonstrates relational database design, third normal form (3NF), stored procedures, triggers, views, indexing, role-based access control, and backup/recovery workflows.
+
+## Contents
+
+- [Academic structure](#academic-structure)
+- [Objectives](#objectives)
+- [Modules](#modules)
+- [Advanced DBMS concepts](#advanced-dbms-concepts)
+- [Architecture](#architecture)
+- [Technology stack](#technology-stack)
+- [Repository layout](#repository-layout)
+- [Data model](#data-model)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Security controls](#security-controls)
+- [Backup and recovery](#backup-and-recovery)
+- [Documentation](#documentation)
+
 An advanced database management system project for the design and implementation of a University Student Information Management System (USIMS).
 
 The system stores student records, academic programmes, enrolment, examination results, and fee payments in a normalised MariaDB schema. A staff registry and public campus site sit on top of stored procedures, triggers, views, indexes, role-based security, and logical backup and recovery.
