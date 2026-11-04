@@ -1,0 +1,12 @@
+-- =============================================================================
+-- Backup and recovery demonstration notes (executed by scripts/backup.sh)
+-- =============================================================================
+-- Logical backup:
+--   mysqldump --single-transaction --routines --triggers --events \
+--     usims > backups/usims_YYYYMMDD_HHMMSS.sql
+--
+-- Restore:
+--   mysql usims < backups/usims_YYYYMMDD_HHMMSS.sql
+--
+-- Point-in-time recovery requires binary logging (optional):
+--   SET GLOBAL log_bin = ON;  -- requires server restart with --log-bin
