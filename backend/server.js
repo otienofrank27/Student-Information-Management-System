@@ -35,7 +35,7 @@ app.use(express.json({ limit: '32kb' }));
 if (!process.env.AUTH_USERNAME || !process.env.AUTH_PASSWORD_HASH || !process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
   throw new Error('Set AUTH_USERNAME, a generated scrypt AUTH_PASSWORD_HASH, and a random SESSION_SECRET of at least 32 characters.');
 }
-if (!/^scrypt\$[a-f0-9]{32}\\$[a-f0-9]{128}$/.test(process.env.AUTH_PASSWORD_HASH) || process.env.SESSION_SECRET.startsWith('REPLACE_')) {
+if (!/^scrypt\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(process.env.AUTH_PASSWORD_HASH) || process.env.SESSION_SECRET.startsWith('REPLACE_')) {
   throw new Error('AUTH_PASSWORD_HASH or SESSION_SECRET still contains an invalid placeholder value.');
 }
 
