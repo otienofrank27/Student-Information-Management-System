@@ -249,6 +249,16 @@ No default passwords are provided. Set unique credentials outside source control
 
 ---
 
+## Security controls
+
+- All registry API routes require a signed, expiring administrator session; the health endpoint exposes only database reachability.
+- Login uses scrypt password hashes, HttpOnly / SameSite=Strict cookies, and per-IP login throttling.
+- Administrative database-inspection, backup, and restore endpoints explicitly require the administrator role.
+- API request bodies are size-limited; API errors do not return SQL messages or stack details.
+- CORS is disabled by default and can be enabled only for exact origins using `CORS_ORIGIN`; same-origin hosting is recommended.
+- Responses include browser security headers and API responses are marked non-cacheable.
+- These controls are not a substitute for HTTPS, operating-system hardening, database network restrictions, tested backups, and a security review before handling real student data.
+
 ## Application surfaces
 
 | Surface | Purpose |
