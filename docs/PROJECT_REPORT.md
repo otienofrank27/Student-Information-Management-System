@@ -169,7 +169,7 @@ The seven tables therefore satisfy 3NF: every non-key attribute depends on the k
 - D: 50–59
 - F: below 50
 
-`trg_student_number_format` requires student numbers of the form `CU` plus seven digits.
+`trg_student_number_format` and `trg_student_number_format_before_update` enforce the `CU` plus seven-digit format on both inserts and updates.
 
 ### 7.3 Views
 
@@ -226,7 +226,7 @@ Sample students, lecturers, departments, registrations, examinations, and paymen
 | --- | --- |
 | 3NF | Inspect `01_schema.sql`; no duplicated names on child tables |
 | Stored procedure | Search students on the Students page |
-| Trigger | Record marks of 101; the API returns the rejection message |
+| Trigger | Record marks of 101 and attempt to change a student number to an invalid value; both writes must be rejected |
 | View | Examinations page reads `vw_student_exam_results` |
 | Indexing | DBA Console lists indexes from `information_schema.STATISTICS` |
 | Security | Connect as each database account and run `SHOW GRANTS`; confirm the lecturer account cannot read `fees` and the application account cannot perform schema administration |
