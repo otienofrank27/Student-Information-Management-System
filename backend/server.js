@@ -515,7 +515,7 @@ try {
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api/')) return next();
     res.sendFile(path.join(frontendDist, 'index.html'));
-  });;
+  });
 } catch {
   console.log('Frontend build not found; running API-only mode.');
 }
