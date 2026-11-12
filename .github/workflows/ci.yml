@@ -78,8 +78,8 @@ jobs:
         run: |
           bash scripts/backup.sh
           backup_file="$(ls -1t backups/usims_*.sql | head -n 1)"
-          mysql --host=127.0.0.1 --port=3306 --user=root --password=root usims \
+          mysql --skip-ssl --host=127.0.0.1 --port=3306 --user=root --password=root usims \
             --execute="INSERT INTO departments (department_code, department_name, faculty) VALUES ('CI_TMP', 'CI restore probe', 'CI test');"
           bash scripts/restore.sh "$backup_file"
-          remaining="$(mysql --host=127.0.0.1 --port=3306 --user=root --password=root usims --batch --skip-column-names --execute="SELECT COUNT(*) FROM departments WHERE department_code='CI_TMP';")"
+          remaining="$(mysql --skip-ssl --host=127.0.0.1 --port=3306 --user=root --password=root usims --batch --skip-column-names --execute="SELECT COUNT(*) FROM departments WHERE department_code='CI_TMP';")"
           test "$remaining" = "0"
