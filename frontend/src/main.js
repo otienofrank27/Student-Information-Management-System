@@ -201,10 +201,10 @@ function renderHome() {
         <h3>This term at a glance</h3>
         <p style="margin:0;color:var(--muted);font-size:13px">Drawn live from <span class="mono">sp_dashboard_stats</span></p>
         <div class="metric-row">
-          <div class="metric"><b>${s.active_students ?? '—'}</b><span>Active scholars</span></div>
-          <div class="metric"><b>${s.total_courses ?? '—'}</b><span>Academic programmes</span></div>
-          <div class="metric"><b>${s.active_registrations ?? '—'}</b><span>Open enrolments</span></div>
-          <div class="metric"><b>${s.exam_records ?? '—'}</b><span>Exam scripts</span></div>
+          <div class="metric"><b>${s.active_students ?? '-'}</b><span>Active scholars</span></div>
+          <div class="metric"><b>${s.total_courses ?? '-'}</b><span>Academic programmes</span></div>
+          <div class="metric"><b>${s.active_registrations ?? '-'}</b><span>Open enrolments</span></div>
+          <div class="metric"><b>${s.exam_records ?? '-'}</b><span>Exam scripts</span></div>
         </div>
         <div class="rule"></div>
         <p style="margin:0;font-size:13px;color:var(--muted)">${faculties.length} schools · 104 programmes · six credential levels</p>
@@ -237,7 +237,7 @@ function renderHome() {
       <div class="section-head">
         <div>
           <h3>Five schools, one ledger</h3>
-          <p>Schools are stored once on the department. Student and course rows keep only a foreign key — never a copied school name.</p>
+          <p>Schools are stored once on the department. Student and course rows keep only a foreign key rather than a copied school name.</p>
         </div>
       </div>
       <div class="faculty-grid">
@@ -342,7 +342,7 @@ function renderAcademics() {
 }
 
 function deptOptions() {
-  return state.departments.map((d) => ({ value: d.department_id, label: `${d.department_code} — ${d.department_name}` }));
+  return state.departments.map((d) => ({ value: d.department_id, label: `${d.department_code} - ${d.department_name}` }));
 }
 function lecturerOptions() {
   return [{ value: '', label: 'Unassigned' }, ...state.lecturers.map((l) => ({
@@ -350,15 +350,15 @@ function lecturerOptions() {
   }))];
 }
 function studentOptions() {
-  return state.students.map((s) => ({ value: s.student_id, label: `${s.student_number} — ${s.first_name} ${s.last_name}` }));
+  return state.students.map((s) => ({ value: s.student_id, label: `${s.student_number} - ${s.first_name} ${s.last_name}` }));
 }
 function courseOptions() {
-  return state.courses.map((c) => ({ value: c.course_id, label: `${c.course_code} — ${c.course_name}` }));
+  return state.courses.map((c) => ({ value: c.course_id, label: `${c.course_code} - ${c.course_name}` }));
 }
 function registrationOptions() {
   return state.registrations.map((r) => ({
     value: r.registration_id,
-    label: `${r.student_number} / ${r.course_code} — ${r.first_name} ${r.last_name}`
+    label: `${r.student_number} / ${r.course_code} - ${r.first_name} ${r.last_name}`
   }));
 }
 
@@ -389,7 +389,7 @@ function renderDashboard() {
         ['Scripts marked', s.exam_records, `${s.total_lecturers || 0} lecturers`],
         ['Bursary collected', `${fmtMoney(s.total_fees_paid)}`, `${s.total_departments || 0} departments`]
       ].map(([label, value, hint]) =>
-        `<article class="card stat"><div class="label">${label}</div><div class="value">${value ?? '—'}</div><div class="hint">${hint}</div></article>`
+        `<article class="card stat"><div class="label">${label}</div><div class="value">${value ?? '-'}</div><div class="hint">${hint}</div></article>`
       ).join('')}
     </div>
     <div class="split" style="margin-top:16px">
@@ -465,7 +465,7 @@ function renderDashboard() {
               <tr>
                 <td><strong>${esc(c.course_code)}</strong> · ${esc(c.course_name)}</td>
                 <td>${esc(c.department_name)}</td>
-                <td>${esc(c.lecturer_name || '—')}</td>
+                <td>${esc(c.lecturer_name || '-')}</td>
                 <td>${c.enrolled_count}</td>
               </tr>`).join('')}
           </tbody>
@@ -521,7 +521,7 @@ function renderCourses() {
       <div>
         <div class="kicker" style="color:var(--copper)">Catalogue</div>
         <h2>Programme catalogue</h2>
-        <p>${state.courses.length} programmes. Department and lecturer are referenced — the 3NF contract in practice.</p>
+        <p>${state.courses.length} programmes. Department and lecturer are referenced as required by the 3NF contract.</p>
       </div>
       <button class="btn copper" id="add-course">Add programme</button>
     </div>
@@ -680,7 +680,7 @@ function renderAdmin() {
         <div class="table-wrap">
           <table>
             <thead><tr><th>Name</th><th>Kind</th><th>Engine</th></tr></thead>
-            <tbody>${a.tables.map((t) => `<tr><td class="mono">${esc(t.TABLE_NAME)}</td><td>${esc(t.TABLE_TYPE)}</td><td>${esc(t.ENGINE || '—')}</td></tr>`).join('')}</tbody>
+            <tbody>${a.tables.map((t) => `<tr><td class="mono">${esc(t.TABLE_NAME)}</td><td>${esc(t.TABLE_TYPE)}</td><td>${esc(t.ENGINE || '-')}</td></tr>`).join('')}</tbody>
           </table>
         </div>
       </section>
