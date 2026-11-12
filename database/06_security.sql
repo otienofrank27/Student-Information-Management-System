@@ -19,9 +19,17 @@ GRANT EXECUTE ON usims.* TO 'sims_app'@'127.0.0.1';
 GRANT SHOW VIEW ON usims.* TO 'sims_app'@'localhost';
 GRANT SHOW VIEW ON usims.* TO 'sims_app'@'127.0.0.1';
 
+-- Container-network accounts. The Docker deployment uses a private bridge
+-- network, so these wildcard-host grants are not exposed to the public internet.
+GRANT SELECT, INSERT, UPDATE, DELETE ON usims.* TO 'sims_app'@'%';
+GRANT EXECUTE ON usims.* TO 'sims_app'@'%';
+GRANT SHOW VIEW ON usims.* TO 'sims_app'@'%';
+
 -- Administrator account: full privileges limited to the USIMS database.
 GRANT ALL PRIVILEGES ON usims.* TO 'sims_admin'@'localhost';
 GRANT ALL PRIVILEGES ON usims.* TO 'sims_admin'@'127.0.0.1';
+
+GRANT ALL PRIVILEGES ON usims.* TO 'sims_admin'@'%';
 
 -- Lecturer account: academic read access and examination write access only.
 GRANT SELECT ON usims.students TO 'sims_lecturer'@'localhost', 'sims_lecturer'@'127.0.0.1';
@@ -36,5 +44,15 @@ GRANT EXECUTE ON PROCEDURE usims.sp_get_student_details TO 'sims_lecturer'@'loca
 GRANT EXECUTE ON PROCEDURE usims.sp_get_student_details TO 'sims_lecturer'@'127.0.0.1';
 GRANT EXECUTE ON PROCEDURE usims.sp_record_exam TO 'sims_lecturer'@'localhost';
 GRANT EXECUTE ON PROCEDURE usims.sp_record_exam TO 'sims_lecturer'@'127.0.0.1';
+GRANT SELECT ON usims.students TO 'sims_lecturer'@'%';
+GRANT SELECT ON usims.departments TO 'sims_lecturer'@'%';
+GRANT SELECT ON usims.courses TO 'sims_lecturer'@'%';
+GRANT SELECT ON usims.lecturers TO 'sims_lecturer'@'%';
+GRANT SELECT ON usims.registrations TO 'sims_lecturer'@'%';
+GRANT SELECT, INSERT, UPDATE ON usims.examinations TO 'sims_lecturer'@'%';
+GRANT SELECT ON usims.vw_student_exam_results TO 'sims_lecturer'@'%';
+GRANT SELECT ON usims.vw_course_enrolment TO 'sims_lecturer'@'%';
+GRANT EXECUTE ON PROCEDURE usims.sp_get_student_details TO 'sims_lecturer'@'%';
+GRANT EXECUTE ON PROCEDURE usims.sp_record_exam TO 'sims_lecturer'@'%';
 
 FLUSH PRIVILEGES;
