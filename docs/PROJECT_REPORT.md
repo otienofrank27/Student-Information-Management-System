@@ -233,7 +233,7 @@ Sample students, registrations, examinations, and payments sit under those schoo
 
 ## 11. Reproducible installation and verification
 
-From the repository root, run `bash scripts/install-database.sh` after starting MySQL or MariaDB. The installer applies the schema, indexes, views, stored procedures, triggers, sample records, and programme catalogue in dependency order. It does not create database users or embed passwords. Provision `sims_app`, `sims_admin`, and `sims_lecturer` with separate strong passwords, then apply `database/06_security.sql`. To apply grants as part of installation, set `INSTALL_DB_GRANTS=true` after creating those accounts.
+**Warning:** `database/01_schema.sql` drops and recreates the `usims` database. Back up any existing database with that name before installation. From the repository root, run `bash scripts/install-database.sh` after starting MySQL or MariaDB. The installer applies the schema, indexes, views, stored procedures, triggers, sample records, and programme catalogue in dependency order. It does not create database users or embed passwords. Provision `sims_app`, `sims_admin`, and `sims_lecturer` with separate strong passwords, then apply `database/06_security.sql`. To apply grants as part of installation, set `INSTALL_DB_GRANTS=true` after creating those accounts.
 
 Run `bash scripts/verify-database.sh` to check the seven base tables, required views, procedures, triggers, student-search indexes, demonstration registrations, and rejection of invalid marks on both insert and update. The verification script deliberately tests rejected writes; it does not modify valid student or examination records.
 
