@@ -216,6 +216,21 @@ The full ERD, 3NF walk-through, and object catalogue are in `docs/PROJECT_REPORT
 
 ---
 
+## Full-stack deployment
+
+For a working hosted application, deploy the frontend, Express API, and MariaDB together. GitHub Pages only serves static files and cannot run the backend or database.
+
+The repository now includes a Docker Compose deployment and first-run database initializer:
+
+- [Full deployment guide](DEPLOYMENT.md)
+- `Dockerfile` builds the Vite frontend and serves it from Express.
+- `docker-compose.yml` runs MariaDB privately and the application on one origin.
+- `docker/db-init.sh` provisions separate database accounts and installs the schema and sample data on a new database volume.
+
+Do not expose port 3306 or commit the server's `.env` file. A VPS/server with Docker is required; pushing to GitHub does not provision hosting.
+
+---
+
 ## Prerequisites
 
 - MariaDB or MySQL 10.11+ (or 8.0+)
