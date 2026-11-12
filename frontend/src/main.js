@@ -59,6 +59,11 @@ function fmtMoney(n) {
   return Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
+function defaultAcademicYear() {
+  const year = new Date().getFullYear();
+  return `${year}/${year + 1}`;
+}
+
 function initials(first, last) {
   return `${(first || '?')[0]}${(last || '')[0] || ''}`.toUpperCase();
 }
@@ -946,7 +951,7 @@ function bind() {
       { name: 'department_id', label: 'School / department', type: 'select', options: deptOptions() },
       { name: 'lecturer_id', label: 'Lecturer', type: 'select', options: lecturerOptions() },
       { name: 'semester', label: 'Semester', type: 'select', options: [{ value: '1', label: 'Semester 1' }, { value: '2', label: 'Semester 2' }] },
-      { name: 'academic_year', label: 'Academic year', value: '2025/2026', required: true }
+      { name: 'academic_year', label: 'Academic year', value: defaultAcademicYear(), required: true }
     ], async (body) => {
       await api('/api/courses', { method: 'POST', body: JSON.stringify(body) });
       flash('Programme added to the catalogue.');
@@ -1003,7 +1008,7 @@ function bind() {
       { name: 'amount', label: 'Payment amount', type: 'number', min: 1, required: true },
       { name: 'payment_date', label: 'Date received', type: 'date', value: new Date().toISOString().slice(0, 10), required: true },
       { name: 'payment_method', label: 'Channel', type: 'select', options: ['Cash', 'Bank Transfer', 'Mobile Money', 'Cheque'].map((v) => ({ value: v, label: v })) },
-      { name: 'academic_year', label: 'Academic year', value: '2025/2026', required: true },
+      { name: 'academic_year', label: 'Academic year', value: defaultAcademicYear(), required: true },
       { name: 'semester', label: 'Semester', type: 'select', options: [{ value: '1', label: '1' }, { value: '2', label: '2' }] },
       { name: 'status', label: 'Status', type: 'select', options: ['Paid', 'Pending', 'Refunded'].map((v) => ({ value: v, label: v })) }
     ], async (body) => {
