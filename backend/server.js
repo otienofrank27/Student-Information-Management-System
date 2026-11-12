@@ -512,9 +512,10 @@ const frontendDist = path.resolve(__dirname, '../frontend/dist');
 try {
   await fs.access(path.join(frontendDist, 'index.html'));
   app.use(express.static(frontendDist, { index: false, maxAge: '1h' }));
-  app.get(/^(?!\\/api(?:\\/|$)).*/, (_req, res) => {
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) return next();
     res.sendFile(path.join(frontendDist, 'index.html'));
-  });
+  });;
 } catch {
   console.log('Frontend build not found; running API-only mode.');
 }
