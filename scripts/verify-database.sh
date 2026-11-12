@@ -38,7 +38,7 @@ cd "$ROOT_DIR"
 expect_at_least "Seven required base tables" "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE'" 7
 expect_at_least "Required views" "SELECT COUNT(*) FROM information_schema.views WHERE table_schema=DATABASE() AND table_name IN ('vw_student_exam_results','vw_course_enrolment','vw_student_fee_summary')" 3
 expect_at_least "Required stored procedures" "SELECT COUNT(*) FROM information_schema.routines WHERE routine_schema=DATABASE() AND routine_type='PROCEDURE' AND routine_name IN ('sp_get_student_details','sp_register_student','sp_update_student','sp_register_course','sp_record_exam','sp_record_payment','sp_dashboard_stats')" 7
-expect_at_least "Required triggers" "SELECT COUNT(*) FROM information_schema.triggers WHERE trigger_schema=DATABASE() AND trigger_name IN ('trg_exam_marks_before_insert','trg_exam_marks_before_update','trg_student_number_format')" 3
+expect_at_least "Required triggers" "SELECT COUNT(*) FROM information_schema.triggers WHERE trigger_schema=DATABASE() AND trigger_name IN ('trg_exam_marks_before_insert','trg_exam_marks_before_update','trg_student_number_format','trg_student_number_format_before_update')" 4
 expect_at_least "Student-search indexes" "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='students' AND index_name IN ('idx_students_last_name','idx_students_full_name','idx_students_email')" 3
 expect_at_least "Demonstration registrations" "SELECT COUNT(*) FROM registrations" 1
 
@@ -64,6 +64,18 @@ for operation in insert update; do
   fi
   echo "PASS: $operation trigger rejected an invalid mark of 101"
 done
+
+student_id="$(query 'SELECT MIN(student_id) FROM students')"
+if [[ -z "$student_id" || "$student_id" == "NULL" ]]; then
+  echo "FAIL: no student row available for the student-number trigger test" >&2
+  exit 1
+fi
+sql="START TRANSACTION; UPDATE students SET student_number='INVALID' WHERE student_id=$student_id; ROLLBACK"
+if query "$sql" >/dev/null 2>&1; then
+  echo "FAIL: student-number update trigger accepted an invalid identifier" >&2
+  exit 1
+fi
+echo "PASS: student-number update trigger rejected an invalid identifier"
 
 unset MYSQL_PWD || true
 echo "Database verification passed."
