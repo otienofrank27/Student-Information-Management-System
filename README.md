@@ -33,6 +33,8 @@
 - [Data model](#data-model)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Database verification](#database-verification)
+- [Evidence and screenshots](#evidence-and-screenshots)
 - [Security controls](#security-controls)
 - [Backup and recovery](#backup-and-recovery)
 - [Documentation](#documentation)
@@ -224,20 +226,31 @@ The full ERD, 3NF walk-through, and object catalogue are in `docs/PROJECT_REPORT
 
 ### 1. Create the database
 
-Run as a privileged client (root / unix_socket):
+On Linux, macOS, or Git Bash, start MySQL/MariaDB and run the portable installer from the repository root:
 
 ```bash
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/01_schema.sql
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/02_indexes.sql
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/03_views.sql
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/04_procedures.sql
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/05_triggers.sql
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/06_security.sql
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/07_sample_data.sql
-mysql -u root --socket=/run/mysqld/mysqld.sock < database/10_programme_catalogue.sql
+bash scripts/install-database.sh
 ```
 
-TCP clients may omit `--socket` and pass `-h 127.0.0.1` instead.
+The script uses the `mysql` client on `PATH`. Configure `DB_HOST`, `DB_PORT`, and `DB_INSTALL_USER` if your local server differs from the defaults. Set `DB_INSTALL_PASSWORD` in the environment when a non-interactive password is required. The installer creates the schema and loads sample data; it skips grants unless `INSTALL_DB_GRANTS=true` is set after the three database accounts have been provisioned.
+
+You can also run the SQL files individually in this order: `01_schema.sql`, `02_indexes.sql`, `03_views.sql`, `04_procedures.sql`, `05_triggers.sql`, `07_sample_data.sql`, and `10_programme_catalogue.sql`. Apply `06_security.sql` only after creating `sims_app`, `sims_admin`, and `sims_lecturer` with separate strong passwords. The `database/08_install.sql` master file uses relative `SOURCE` paths and must be invoked from the repository root:
+
+```bash
+mysql -u root -p < database/08_install.sql
+```
+
+### XAMPP / Windows
+
+Start MySQL in the XAMPP Control Panel. In PowerShell, run the SQL files individually using the XAMPP client, for example:
+
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u root -p < database\01_schema.sql
+```
+
+Repeat for the remaining SQL files in the order above. Alternatively, use Git Bash with `bash scripts/install-database.sh` after adding the XAMPP `mysql/bin` directory to `PATH`. phpMyAdmin users can import the SQL files individually in the same order.
+
+### 2. Configure credentials and administrator access
 
 ### 2. Configure credentials and administrator access
 
@@ -324,6 +337,16 @@ No default passwords are provided. Set unique credentials outside source control
 
 ---
 
+## Database verification
+
+After installation, run the automated structural and trigger checks:
+
+```bash
+bash scripts/verify-database.sh
+```
+
+The script checks the seven base tables, required views, stored procedures, triggers, student-search indexes, sample registrations, and confirms that insert and update attempts with a mark of 101 are rejected. It does not change valid student or examination data. It requires a MySQL/MariaDB client and a database account with read access plus permission to attempt the rejected examination writes.
+
 ## Backup and recovery
 
 Logical backup including routines, triggers, and events. Generated SQL dumps are local-only and excluded from Git; do not publish production backups. Use only anonymised synthetic data for any public demo fixture:
@@ -363,9 +386,13 @@ The DBA vault can also seal a backup and restore it from the browser. Keep the g
 
 ---
 
+## Evidence and screenshots
+
+The `screenshots/` directory contains instructions for collecting genuine evidence. Capture the dashboard, student search, course catalogue, registration, examination results, fee management, ERD, and successful verification output from a running installation. Use synthetic records only and remove personal or financial information. Do not submit mock screenshots as execution evidence.
+
 ## Documentation
 
-The project report, ERD, normalisation notes, and object catalogue are in `docs/PROJECT_REPORT.md`.
+The project report, ERD, normalisation notes, installation procedure, verification steps, and evidence checklist are in `docs/PROJECT_REPORT.md`.
 
 ---
 
