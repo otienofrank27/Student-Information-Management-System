@@ -8,8 +8,8 @@ set -euo pipefail
 DB_NAME="${DB_NAME:-usims}"
 DB_USER="${DB_USER:-sims_app}"
 DB_ADMIN_USER="${DB_ADMIN_USER:-sims_admin}"
-if [[ "$DB_USER" != "sims_app" || "$DB_ADMIN_USER" != "sims_admin" ]]; then
-  echo "This database grant script expects DB_USER=sims_app and DB_ADMIN_USER=sims_admin." >&2
+if [[ "$DB_NAME" != "usims" || "$DB_USER" != "sims_app" || "$DB_ADMIN_USER" != "sims_admin" ]]; then
+  echo "This database initializer expects DB_NAME=usims, DB_USER=sims_app, and DB_ADMIN_USER=sims_admin." >&2
   exit 1
 fi
 
