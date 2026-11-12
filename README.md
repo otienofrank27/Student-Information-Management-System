@@ -19,7 +19,7 @@
 
 </div>
 
-> **Project overview:** USIMS demonstrates relational database design, third normal form (3NF), stored procedures, triggers, views, indexing, role-based access control, and backup/recovery workflows.
+> **Project overview:** USIMS demonstrates relational database design, third normal form (3NF), stored procedures, triggers, views, indexing, database-level privilege separation, and backup/recovery workflows.
 
 ## Contents
 
@@ -41,9 +41,11 @@
 
 An advanced database management system project for the design and implementation of a University Student Information Management System (USIMS).
 
-The system stores student records, academic programmes, enrolment, examination results, and fee payments in a normalised MariaDB schema. A staff registry and public campus site sit on top of stored procedures, triggers, views, indexes, role-based security, and logical backup and recovery.
+The system stores student records, programme entries, enrolments, examination results, and fee payments in a normalised MariaDB schema. A staff registry and campus landing page sit on top of stored procedures, triggers, views, indexes, database-level privilege separation, and logical backup and recovery.
 
-**Institution:** University Student Information Management System (USIMS)
+> **Data note:** Student, lecturer, department, course, examination, and fee records in the bundled SQL files are synthetic examples created for coursework demonstrations. They are not real people, verified university records, or an official prospectus. Replace them with institution-approved data before any real deployment.
+
+**Project name:** University Student Information Management System (USIMS)
 **Duration:** 14 days
 **DBMS:** MariaDB 10.11 / MySQL
 **Application:** Node.js Express API and Vite frontend
@@ -52,7 +54,7 @@ The system stores student records, academic programmes, enrolment, examination r
 
 ## Academic structure
 
-The university offers **104 academic programmes** across **six credential levels** and **five schools**.
+The bundled **synthetic catalogue** contains 104 illustrative programme records across six credential levels and five sample schools. It is demonstration data, not an official university prospectus.
 
 | Credential | Programmes |
 | --- | ---: |
@@ -290,10 +292,10 @@ bash start.sh
 | User | Role | Privileges |
 | --- | --- | --- |
 | `sims_admin` | Administrator | `ALL PRIVILEGES` on `usims` |
-| `sims_lecturer` | Lecturer | `SELECT` on academic tables; `INSERT`/`UPDATE` on `examinations`; `EXECUTE` on student lookup and exam recording; no access to `fees` |
+| `sims_lecturer` | Database lecturer account | `SELECT` on academic tables; `INSERT`/`UPDATE` on `examinations`; no access to `fees` |
 | `sims_app` | Application | `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `EXECUTE`, `SHOW VIEW` on `usims` |
 
-No default passwords are provided. Set unique credentials outside source control and rotate any credentials that were previously committed.
+These are MariaDB accounts and grants, not three application login roles. The current web interface has one configured administrator login; a separate lecturer web login is not implemented. No default passwords are provided. Set unique credentials outside source control.
 
 ---
 
@@ -301,7 +303,7 @@ No default passwords are provided. Set unique credentials outside source control
 
 - All registry API routes require a signed, expiring administrator session; the health endpoint exposes only database reachability.
 - Login uses scrypt password hashes, HttpOnly / SameSite=Strict cookies, and per-IP login throttling.
-- Administrative database-inspection, backup, and restore endpoints explicitly require the administrator role.
+- Administrative database-inspection, backup, and restore endpoints explicitly require the administrator role. The current web application does not expose lecturer sign-in or per-lecturer record scoping.
 - API request bodies are size-limited; API errors do not return SQL messages or stack details.
 - CORS is disabled by default and can be enabled only for exact origins using `CORS_ORIGIN`; same-origin hosting is recommended.
 - Responses include browser security headers and API responses are marked non-cacheable.
@@ -312,7 +314,7 @@ No default passwords are provided. Set unique credentials outside source control
 | Surface | Purpose |
 | --- | --- |
 | Campus | Public landing page with live term statistics and school cards |
-| Academics | Filterable prospectus of 104 programmes by school and credential |
+| Academics | Filterable catalogue of synthetic programme records by school and credential |
 | Staff registry | Operational desk for scholars, enrolment, examinations, bursary, and the DBA vault |
 
 ---
@@ -329,7 +331,7 @@ No default passwords are provided. Set unique credentials outside source control
 | POST | `/api/registrations` | `sp_register_course` (active students only) |
 | POST | `/api/examinations` | `sp_record_exam` (trigger validates marks) |
 | POST | `/api/fees` | `sp_record_payment` |
-| GET | `/api/admin/objects` | Tables, views, indexes, routines, triggers, grants |
+| GET | `/api/admin/objects` | Tables, views, indexes, routines, triggers, and grants for the configured admin connection |
 | POST | `/api/admin/backup` | Logical dump into `backups/` |
 | POST | `/api/admin/restore` | Replay a dump file |
 
