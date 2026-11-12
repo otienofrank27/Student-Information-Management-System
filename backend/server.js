@@ -431,15 +431,14 @@ app.get('/api/admin/objects', requireAdmin, async (_req, res) => {
       `SELECT TRIGGER_NAME, EVENT_MANIPULATION, EVENT_OBJECT_TABLE, ACTION_TIMING
        FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA = 'usims'`
     );
-    const [users] = await adminPool.query(
-      `SELECT User, Host FROM mysql.user WHERE User LIKE 'sims_%' ORDER BY User`
-    );
-    const grants = [];
-    for (const u of users) {
-      const [g] = await adminPool.query(`SHOW GRANTS FOR ?@?`, [u.User, u.Host]);
-      grants.push({ user: `${u.User}@${u.Host}`, grants: g.map((row) => Object.values(row)[0]) });
-    }
-    res.json({ ok: true, tables, indexes, routines, triggers, grants });
+    // SHOW GRANTS without a target lists the privileges of this connection.
+    // A database-scoped sims_admin account must not query mysql.user globally.
+    const [currentGrants] = await adminPool.query('SHOW GRANTS');
+    const grants = [{
+      user: 'Configured database administration connection',
+      grants: currentGrants.map((row) => Object.values(row)[0])
+    }];
+        res.json({ ok: true, tables, indexes, routines, triggers, grants });
   } catch (err) {
     sendError(res, err);
   }
