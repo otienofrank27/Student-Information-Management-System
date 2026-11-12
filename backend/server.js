@@ -506,6 +506,19 @@ app.post('/api/admin/restore', requireAdmin, async (req, res) => {
   }
 });
 
+// In the production container, serve the compiled Vite application from the
+// same origin as the API so session cookies and /api requests remain same-site.
+const frontendDist = path.resolve(__dirname, '../frontend/dist');
+try {
+  await fs.access(path.join(frontendDist, 'index.html'));
+  app.use(express.static(frontendDist, { index: false, maxAge: '1h' }));
+  app.get(/^(?!\\/api(?:\\/|$)).*/, (_req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+} catch {
+  console.log('Frontend build not found; running API-only mode.');
+}
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`USIMS API listening on ${PORT}`);
 });
