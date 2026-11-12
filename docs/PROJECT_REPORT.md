@@ -230,10 +230,31 @@ Sample students, registrations, examinations, and payments sit under those schoo
 | Security | DBA Console shows `SHOW GRANTS` for admin and lecturer |
 | Backup | DBA Console “Create backup”, then Restore |
 
-## 11. Limitations and further work
+
+## 11. Reproducible installation and verification
+
+From the repository root, run `bash scripts/install-database.sh` after starting MySQL or MariaDB. The installer applies the schema, indexes, views, stored procedures, triggers, sample records, and programme catalogue in dependency order. It does not create database users or embed passwords. Provision `sims_app`, `sims_admin`, and `sims_lecturer` with separate strong passwords, then apply `database/06_security.sql`. To apply grants as part of installation, set `INSTALL_DB_GRANTS=true` after creating those accounts.
+
+Run `bash scripts/verify-database.sh` to check the seven base tables, required views, procedures, triggers, student-search indexes, demonstration registrations, and rejection of invalid marks on both insert and update. The verification script deliberately tests rejected writes; it does not modify valid student or examination records.
+
+### XAMPP / Windows setup
+
+Start MySQL from the XAMPP Control Panel. Open a terminal in the repository root and use the XAMPP MySQL client, for example:
+
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u root -p < database\01_schema.sql
+```
+
+Apply the remaining numbered SQL files in order, or use Git Bash with `bash scripts/install-database.sh` and ensure the MySQL client is on `PATH`. The SQL master installer `database/08_install.sql` uses repository-relative `SOURCE` paths and must be run with the repository root as the current working directory. In phpMyAdmin, import the SQL files individually in the same order; run the grants file only after the three database accounts have been created.
+
+## 12. Evidence and screenshots
+
+Capture genuine screenshots from the running application and database client. Include at least: dashboard, student search, course catalogue, course registration, examination results, fee records, the ERD, and successful database verification output. For the trigger demonstration, show that an attempted mark of 101 is rejected. Use synthetic data only and remove personal or financial information before committing screenshots. The repository intentionally does not include fabricated screenshots or claim that unexecuted tests passed.
+
+## 13. Limitations and further work
 
 The two-week scope omits timetable, hostel, and online payment gateways. Binary logging for point-in-time recovery is optional and not enabled by default. A production deployment would add TLS, hashed application passwords, and audited logins.
 
-## 12. Conclusion
+## 14. Conclusion
 
 USIMS stores university student information in a normalised MariaDB schema and demonstrates the advanced DBMS features required by the brief: procedures, triggers, views, indexes, roles, and backup/recovery, with a working five-module application on top.
