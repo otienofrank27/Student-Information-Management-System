@@ -337,6 +337,10 @@ These are MariaDB accounts and grants, not three application login roles. The cu
 
 ---
 
+## Automated checks
+
+GitHub Actions runs the backend authentication tests, builds the frontend, installs a clean MariaDB 10.11 schema, checks required database objects and invalid-mark triggers, then performs a logical backup/restore probe. The workflow is defined in `.github/workflows/ci.yml`. A green workflow run is required before treating these checks as passing; local setup and institution-specific acceptance testing remain separate.
+
 ## Database verification
 
 After installation, run the automated structural and trigger checks:
