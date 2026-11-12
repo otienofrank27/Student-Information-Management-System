@@ -2,6 +2,12 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$ROOT_DIR/.env"
+  set +a
+fi
 MYSQL_BIN="${MYSQL_BIN:-mysql}"
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
@@ -39,14 +45,14 @@ expect_at_least "Demonstration registrations" "SELECT COUNT(*) FROM registration
 registration_id="$(query 'SELECT MIN(registration_id) FROM registrations')"
 for operation in insert update; do
   if [[ "$operation" == "insert" ]]; then
-    sql="INSERT INTO examinations (registration_id, exam_type, marks, exam_date) VALUES ($registration_id, 'CA', 101, CURRENT_DATE())"
+    sql="START TRANSACTION; INSERT INTO examinations (registration_id, exam_type, marks, exam_date) VALUES ($registration_id, 'CA', 101, CURRENT_DATE()); ROLLBACK"
   else
     exam_id="$(query 'SELECT MIN(exam_id) FROM examinations')"
     if [[ -z "$exam_id" || "$exam_id" == "NULL" ]]; then
       echo "FAIL: no examination row available for update-trigger test" >&2
       exit 1
     fi
-    sql="UPDATE examinations SET marks=101 WHERE exam_id=$exam_id"
+    sql="START TRANSACTION; UPDATE examinations SET marks=101 WHERE exam_id=$exam_id; ROLLBACK"
   fi
   if query "$sql" >/dev/null 2>&1; then
     echo "FAIL: $operation trigger accepted an invalid mark of 101" >&2
