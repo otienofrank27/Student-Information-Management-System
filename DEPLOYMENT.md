@@ -50,11 +50,11 @@ docker compose logs -f app database
 
 On the first start, MariaDB creates the three database accounts, installs the schema, views, stored procedures, triggers, and synthetic demonstration data. The database volume persists between container restarts. The initialization scripts run only when the database volume is first created.
 
-Open `http://SERVER_IP:3001` to test the app. The health endpoint is `http://SERVER_IP:3001/api/health`; it should return JSON with `ok: true` and `database: usims`.
+The app port is bound to `127.0.0.1` on the server, not exposed directly to the internet. Before signing in, configure HTTPS through Caddy or Nginx and proxy the domain to `127.0.0.1:3001`. From the server itself, verify the database with `curl http://127.0.0.1:3001/api/health`; it should return JSON with `ok: true` and `database: usims`.
 
 ## 4. Put HTTPS in front
 
-For a public deployment, point your domain to the server and configure Caddy or Nginx to proxy HTTPS traffic to `127.0.0.1:3001`. Do not publish port 3306. Set the application port binding to `127.0.0.1:3001:3001` in `docker-compose.yml` when a reverse proxy runs on the host. The app uses secure session cookies in production, so sign-in must be accessed over HTTPS.
+For a public deployment, point your domain to the server and configure Caddy or Nginx to proxy HTTPS traffic to `127.0.0.1:3001`. A minimal Caddy site block is:\n\n```caddyfile\nportal.example.com {\n  reverse_proxy 127.0.0.1:3001\n}\n```\n\nReplace the example hostname with your real domain. Caddy can obtain and renew TLS certificates automatically when DNS points to the server and ports 80/443 are reachable. Do not publish port 3306. The app uses secure session cookies in production, so sign-in must be accessed over HTTPS.
 
 ## 5. Updates and backups
 
