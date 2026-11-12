@@ -1,10 +1,10 @@
 :root {
-  --page: #e9eeeb;
-  --surface: #f1f4f1;
-  --surface-raised: #e3eae6;
+  --page: #ffffff;
+  --surface: #ffffff;
+  --surface-raised: #f6f8f7;
   --ink: #26383b;
   --muted: #647578;
-  --line: #d0dbd6;
+  --line: #e1e7e3;
   --accent: #456d69;
   --accent-dark: #345653;
   --accent-soft: #dce8e3;
@@ -28,7 +28,7 @@ a { color: var(--accent-dark); }
 .site-header {
   display: flex; align-items: center; justify-content: space-between; gap: 18px;
   padding: 15px 32px; position: sticky; top: 0; z-index: 30;
-  background: #e2e9e5; border-bottom: 1px solid var(--line);
+  background: #ffffff; border-bottom: 1px solid var(--line);
 }
 .brand-lockup { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .crest { width: 42px; height: 42px; border-radius: 9px; box-shadow: none; }
@@ -88,7 +88,7 @@ a { color: var(--accent-dark); }
 .faculty-card h4 { margin: 9px 0 7px; font-family: var(--serif); font-size: 19px; }
 .faculty-card p { margin: 0; color: var(--muted); font-size: 13px; }
 .workspace { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 72px); }
-.rail { padding: 20px 14px 26px; border-right: 1px solid var(--line); background: #e4ebe7; }
+.rail { padding: 20px 14px 26px; border-right: 1px solid var(--line); background: #ffffff; }
 .rail-label { padding: 0 10px 9px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
 .rail button {
   width: 100%; text-align: left; border: 0; background: transparent; color: var(--ink);
