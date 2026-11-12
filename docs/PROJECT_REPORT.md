@@ -1,6 +1,6 @@
 # Design and Implementation of a University Student Information Management System
 
-**Institution:** University Student Information Management System (USIMS)
+**Project:** University Student Information Management System (USIMS)
 **Duration:** 14 days
 **DBMS:** MariaDB 10.11 / MySQL
 **Application:** Node.js Express API and Vite frontend
