@@ -183,11 +183,13 @@ Non-unique indexes were added on student last name, full name, email, status, an
 
 ### 7.5 Security
 
-Three MariaDB accounts implement least privilege:
+Three MariaDB accounts define database-level privileges:
 
 - `sims_admin@localhost` — `ALL PRIVILEGES` on `usims`
 - `sims_lecturer@localhost` — `SELECT` on academic tables, `INSERT/UPDATE` on `examinations`, no access to `fees`
 - `sims_app@localhost` — DML and `EXECUTE` for the web API
+
+These are database accounts, not application login roles. The current web interface authenticates one configured administrator account. It does not implement a separate lecturer login or lecturer-specific record scoping. The API uses `sims_app` for ordinary data operations and `sims_admin` for database inspection and backup/restore.
 
 ### 7.6 Backup and recovery
 
@@ -195,11 +197,11 @@ Logical backups are produced with `mysqldump --single-transaction --routines --t
 
 ## 8. Application architecture
 
-The preview environment exposes one port. A Vite development server therefore reverse-proxies `/api` to Express on port 3001. Express uses `mysql2` connection pools: an application pool as `sims_app` and an admin pool over the local socket for metadata, grants, backup, and restore.
+The Vite development server reverse-proxies `/api` to Express on port 3001. Express uses `mysql2` connection pools: an application pool as `sims_app` and a separate administration pool as `sims_admin` for database metadata, its own grants, backup, and restore.
 
 ## 9. Sample data
 
-The academic catalogue holds 104 programmes across six credential levels:
+The bundled synthetic academic catalogue contains 104 illustrative programme records across six credential levels. These are demonstration records, not an official prospectus:
 
 - Certificates: 35
 - Diplomas: 25
@@ -216,7 +218,7 @@ They are distributed across five schools:
 - School of Engineering and Technology
 - School of Business and Education
 
-Sample students, registrations, examinations, and payments sit under those schools so queries, the exam-mark trigger, and screenshots can be demonstrated immediately. The full catalogue is in `database/10_programme_catalogue.sql`.
+Sample students, lecturers, departments, registrations, examinations, and payments use invented names and example contact details. They exist only to exercise joins, constraints, procedures, views, and screenshots. Do not treat them as real people or institutional records. The full synthetic catalogue is in `database/10_programme_catalogue.sql`.
 
 ## 10. Testing the required concepts
 
@@ -227,7 +229,7 @@ Sample students, registrations, examinations, and payments sit under those schoo
 | Trigger | Record marks of 101; the API returns the rejection message |
 | View | Examinations page reads `vw_student_exam_results` |
 | Indexing | DBA Console lists indexes from `information_schema.STATISTICS` |
-| Security | DBA Console shows `SHOW GRANTS` for admin and lecturer |
+| Security | Connect as each database account and run `SHOW GRANTS`; confirm the lecturer account cannot read `fees` and the application account cannot perform schema administration |
 | Backup | DBA Console “Create backup”, then Restore |
 
 
@@ -253,8 +255,8 @@ Capture genuine screenshots from the running application and database client. In
 
 ## 13. Limitations and further work
 
-The two-week scope omits timetable, hostel, and online payment gateways. Binary logging for point-in-time recovery is optional and not enabled by default. A production deployment would add TLS, hashed application passwords, and audited logins.
+The current web interface has one administrator login; separate lecturer authentication, lecturer-to-course assignment enforcement, and per-user audit trails are not implemented. The two-week scope also omits timetable, hostel, and online payment gateways. Binary logging for point-in-time recovery is optional and not enabled by default. A production deployment would require TLS, tested backups, institution-specific policies, and a security review.
 
 ## 14. Conclusion
 
-USIMS stores university student information in a normalised MariaDB schema and demonstrates the advanced DBMS features required by the brief: procedures, triggers, views, indexes, roles, and backup/recovery, with a working five-module application on top.
+USIMS is a coursework implementation of a normalised MariaDB schema with procedures, triggers, views, indexes, database-level privilege separation, and backup/recovery scripts, alongside five application modules. The installation, verification, and recovery procedures must be run in the target environment before the project can be described as operationally tested.
