@@ -112,7 +112,7 @@ The public site presents Campus, Academics (filterable prospectus), and the staf
 | --- | --- |
 | Normalisation | Seven tables in 3NF; no duplicated school, lecturer, or student names on child rows |
 | Stored procedures | `sp_get_student_details`, `sp_register_student`, `sp_update_student`, `sp_register_course`, `sp_record_exam`, `sp_record_payment`, `sp_dashboard_stats` |
-| Triggers | `trg_exam_marks_before_insert` / `_update` reject marks outside 0–100 and assign A–F; `trg_student_number_format` requires `CU` plus seven digits |
+| Triggers | `trg_exam_marks_before_insert` / `_update` reject marks outside 0–100 and assign A–F; `trg_student_number_format` and `trg_student_number_format_before_update` enforce `CU` plus seven digits on insert and update |
 | Views | `vw_student_exam_results`, `vw_course_enrolment`, `vw_student_fee_summary` |
 | Indexing | Last name, full name, email, status, department, credential level, and foreign-key join paths |
 | Security | `sims_admin` (ALL on `usims`), `sims_lecturer` (academic read, examination write, no fees), `sims_app` (DML and EXECUTE for the API) |
@@ -349,7 +349,7 @@ After installation, run the automated structural and trigger checks:
 bash scripts/verify-database.sh
 ```
 
-The script checks the seven base tables, required views, stored procedures, triggers, student-search indexes, sample registrations, and confirms that insert and update attempts with a mark of 101 are rejected. It does not change valid student or examination data. It requires a MySQL/MariaDB client and a database account with read access plus permission to attempt the rejected examination writes.
+The script checks the seven base tables, required views, stored procedures, triggers, student-search indexes, sample registrations, and confirms that insert and update attempts with a mark of 101 are rejected, and that an invalid student-number update is blocked. It does not change valid student or examination data. It requires a MySQL/MariaDB client and a database account with read access plus permission to attempt the rejected examination writes.
 
 ## Backup and recovery
 
