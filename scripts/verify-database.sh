@@ -42,7 +42,11 @@ expect_at_least "Required triggers" "SELECT COUNT(*) FROM information_schema.tri
 expect_at_least "Student-search indexes" "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='students' AND index_name IN ('idx_students_last_name','idx_students_full_name','idx_students_email')" 3
 expect_at_least "Demonstration registrations" "SELECT COUNT(*) FROM registrations" 1
 
-registration_id="$(query 'SELECT MIN(registration_id) FROM registrations')"
+registration_id="$(query "SELECT r.registration_id FROM registrations r LEFT JOIN examinations e ON e.registration_id=r.registration_id AND e.exam_type='CA' WHERE e.exam_id IS NULL ORDER BY r.registration_id LIMIT 1")"
+if [[ -z "$registration_id" || "$registration_id" == "NULL" ]]; then
+  echo "FAIL: no registration without a CA result is available for the insert-trigger test" >&2
+  exit 1
+fi
 for operation in insert update; do
   if [[ "$operation" == "insert" ]]; then
     sql="START TRANSACTION; INSERT INTO examinations (registration_id, exam_type, marks, exam_date) VALUES ($registration_id, 'CA', 101, CURRENT_DATE()); ROLLBACK"
