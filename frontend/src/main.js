@@ -702,7 +702,8 @@ function renderAdmin() {
       </div>
     </section>
     <section class="card" style="margin-top:16px">
-      <h3 style="margin:0 0 10px;font-family:var(--serif)">Security roles</h3>
+      <h3 style="margin:0 0 10px;font-family:var(--serif)">Database grants</h3>
+      <p class="muted">The live grants below belong to the configured administration connection. Lecturer and application account grants are defined in database/06_security.sql and should be checked by connecting as those accounts.</p>
       ${(a.grants || []).map((g) => `<p><strong>${esc(g.user)}</strong></p><pre class="mono">${esc((g.grants || []).join('\n'))}</pre>`).join('')}
     </section>
     <section class="card" style="margin-top:16px">
