@@ -252,8 +252,6 @@ Repeat for the remaining SQL files in the order above. Alternatively, use Git Ba
 
 ### 2. Configure credentials and administrator access
 
-### 2. Configure credentials and administrator access
-
 Copy the root `.env.example` to `.env` and set unique, randomly generated database credentials. Never commit `.env`. Create the `sims_app`, `sims_admin`, and `sims_lecturer` database accounts securely before running `database/06_security.sql`; that grants script contains no passwords.
 
 Generate the administrator password hash and session signing secret:
