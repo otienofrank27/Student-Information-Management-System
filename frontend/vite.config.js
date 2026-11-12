@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/University-Student-Information-Management-System/',
   server: {
     host: '0.0.0.0',
     port: 5173,
