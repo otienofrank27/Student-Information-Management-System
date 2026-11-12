@@ -438,7 +438,7 @@ app.get('/api/admin/objects', requireAdmin, async (_req, res) => {
       user: 'Configured database administration connection',
       grants: currentGrants.map((row) => Object.values(row)[0])
     }];
-        res.json({ ok: true, tables, indexes, routines, triggers, grants });
+    res.json({ ok: true, tables, indexes, routines, triggers, grants });
   } catch (err) {
     sendError(res, err);
   }
