@@ -41,7 +41,7 @@
 
 An advanced database management system project for the design and implementation of a University Student Information Management System (USIMS).
 
-The system stores student records, programme entries, enrolments, examination results, and fee payments in a normalised MariaDB schema. A staff registry and campus landing page sit on top of stored procedures, triggers, views, indexes, database-level privilege separation, and logical backup and recovery.
+The system stores student records, programme entries, enrolments, examination results, and fee payments in a normalised MariaDB schema. An authenticated campus overview and staff registry sit on top of stored procedures, triggers, views, indexes, database-level privilege separation, and logical backup and recovery.
 
 > **Data note:** Student, lecturer, department, course, examination, and fee records in the bundled SQL files are synthetic examples created for coursework demonstrations. They are not real people, verified university records, or an official prospectus. Replace them with institution-approved data before any real deployment.
 
@@ -102,7 +102,7 @@ Schools are stored once on `departments.faculty`. Student and course rows keep o
 | Fee management | Record bursary receipts with generated receipt numbers |
 | DBA vault | Inspect objects, grants, indexes; create and restore dumps |
 
-The public site presents Campus, Academics (filterable prospectus), and the staff registry.
+After administrator sign-in, the interface presents a Campus overview, Academics (filterable catalogue), and the staff registry.
 
 ---
 
@@ -313,7 +313,7 @@ These are MariaDB accounts and grants, not three application login roles. The cu
 
 | Surface | Purpose |
 | --- | --- |
-| Campus | Public landing page with live term statistics and school cards |
+| Campus | Authenticated overview with live database statistics and academic-unit summaries |
 | Academics | Filterable catalogue of synthetic programme records by school and credential |
 | Staff registry | Operational desk for scholars, enrolment, examinations, bursary, and the DBA vault |
 
