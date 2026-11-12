@@ -56,16 +56,15 @@ BEGIN
     END IF;
 END $$
 
-DROP TRIGGER IF EXISTS trg_student_number_format_before_update $
+DROP TRIGGER IF EXISTS trg_student_number_format_before_update $$
 CREATE TRIGGER trg_student_number_format_before_update
 BEFORE UPDATE ON students
 FOR EACH ROW
 BEGIN
-    IF NEW.student_number NOT REGEXP '^CU[0-9]{7}
- THEN
+    IF NEW.student_number NOT REGEXP '^CU[0-9]{7}$' THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Student number must match CU followed by 7 digits (e.g. CU2024001).';
     END IF;
-END $
+END $$
 
 DELIMITER ;
