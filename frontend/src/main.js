@@ -177,8 +177,8 @@ function header(active) {
 function footer() {
   return `
     <footer class="footnote">
-      <span>University Student Information Management System · Academic year 2025/2026 · Normalised to 3NF on MariaDB</span>
-      <span>Student numbers follow CU####### · Marks constrained 0–100 by trigger</span>
+      <span>USIMS demonstration · Synthetic records · MariaDB database</span>
+      <span>Student numbers follow the sample CU####### format · Marks constrained to 0–100</span>
     </footer>`;
 }
 
@@ -189,9 +189,9 @@ function renderHome() {
     ${header('home')}
     <section class="hero">
       <div class="hero-copy">
-        <div class="kicker">Est. in the highlands · Official registry</div>
-        <h2>A living record of every scholar, seat, and seal.</h2>
-        <p>The university offers 104 programmes across six credential levels and five schools. The registry keeps identities, enrolments, examinations and bursary in one disciplined ledger.</p>
+        <div class="kicker">Demonstration environment · Synthetic records</div>
+        <h2>Student records, enrolment and results in one place.</h2>
+        <p>This demonstration uses synthetic academic records to show how a university registry can manage student details, course enrolment, examination results and fee payments in a relational database.</p>
         <div class="hero-actions">
           <button class="btn gold" data-view="registry">Open the staff registry</button>
           <button class="btn ghost" data-view="academics" style="color:#f8efd8;border-color:rgba(248,239,216,0.35)">Browse schools</button>
@@ -207,7 +207,7 @@ function renderHome() {
           <div class="metric"><b>${s.exam_records ?? '-'}</b><span>Exam scripts</span></div>
         </div>
         <div class="rule"></div>
-        <p style="margin:0;font-size:13px;color:var(--muted)">${faculties.length} schools · 104 programmes · six credential levels</p>
+        <p style="margin:0;font-size:13px;color:var(--muted)">${faculties.length} academic units · ${s.total_courses ?? 0} course records</p>
       </aside>
     </section>
     <section class="section">
@@ -218,14 +218,7 @@ function renderHome() {
         </div>
       </div>
       <div class="stats">
-        ${(state.dashboard?.byCredential || [
-          { credential_level: 'Certificate', total: 35 },
-          { credential_level: 'Diploma', total: 25 },
-          { credential_level: 'Advanced Diploma', total: 3 },
-          { credential_level: 'Bachelor', total: 37 },
-          { credential_level: 'Master', total: 3 },
-          { credential_level: 'Doctorate', total: 1 }
-        ]).map((row) => `
+        ${(state.dashboard?.byCredential || []).map((row) => `
           <article class="card stat">
             <div class="label">${esc(row.credential_level)}</div>
             <div class="value">${row.total}</div>
@@ -236,7 +229,7 @@ function renderHome() {
     <section class="section">
       <div class="section-head">
         <div>
-          <h3>Five schools, one ledger</h3>
+          <h3>Academic units in the sample database</h3>
           <p>Schools are stored once on the department. Student and course rows keep only a foreign key rather than a copied school name.</p>
         </div>
       </div>
@@ -299,7 +292,7 @@ function renderAcademics() {
       <div class="section-head">
         <div>
           <h3>Academic prospectus</h3>
-          <p>104 programmes across five schools and six credential levels. Filter the ledger without leaving the page.</p>
+          <p>Illustrative programme records loaded from the demonstration database. Filter by academic unit or credential level.</p>
         </div>
       </div>
       <div class="toolbar">
@@ -641,7 +634,7 @@ function renderFees() {
       <article class="card stat"><div class="label">Received</div><div class="value">${fmtMoney(paid)}</div><div class="hint">Paid receipts</div></article>
       <article class="card stat"><div class="label">Outstanding</div><div class="value">${fmtMoney(pending)}</div><div class="hint">Pending invoices</div></article>
       <article class="card stat"><div class="label">Receipts</div><div class="value">${state.fees.length}</div><div class="hint">All methods</div></article>
-      <article class="card stat"><div class="label">Lecturer access</div><div class="value">Denied</div><div class="hint">Role cannot read fees</div></article>
+      <article class="card stat"><div class="label">Lecturer DB grant</div><div class="value">No fee access</div><div class="hint">Defined in database/06_security.sql</div></article>
     </div>
     <section class="card">
       <div class="table-wrap">
@@ -751,7 +744,7 @@ function renderRegistry() {
           <button data-page="${id}" class="${state.page === id ? 'active' : ''}">
             <span>${label}</span><small style="opacity:.7">${hint}</small>
           </button>`).join('')}
-        <p class="rail-note">Administrator role holds the vault. Lecturer role may mark scripts but never open bursary.</p>
+        <p class="rail-note">The web interface currently has one administrator sign-in. Lecturer privileges are defined at database level in database/06_security.sql; a separate lecturer web login is not implemented.</p>
       </aside>
       <main class="main">${workspacePage()}</main>
     </div>`;
@@ -1006,7 +999,7 @@ function bind() {
   if (addFee) {
     addFee.onclick = () => openModal('Record a bursary receipt', [
       { name: 'student_id', label: 'Scholar', type: 'select', options: studentOptions(), full: true },
-      { name: 'amount', label: 'Amount (UGX)', type: 'number', min: 1, required: true },
+      { name: 'amount', label: 'Payment amount', type: 'number', min: 1, required: true },
       { name: 'payment_date', label: 'Date received', type: 'date', value: new Date().toISOString().slice(0, 10), required: true },
       { name: 'payment_method', label: 'Channel', type: 'select', options: ['Cash', 'Bank Transfer', 'Mobile Money', 'Cheque'].map((v) => ({ value: v, label: v })) },
       { name: 'academic_year', label: 'Academic year', value: '2025/2026', required: true },
