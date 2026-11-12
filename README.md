@@ -232,7 +232,7 @@ On Linux, macOS, or Git Bash, start MySQL/MariaDB and run the portable installer
 bash scripts/install-database.sh
 ```
 
-The script uses the `mysql` client on `PATH`. Configure `DB_HOST`, `DB_PORT`, and `DB_INSTALL_USER` if your local server differs from the defaults. Set `DB_INSTALL_PASSWORD` in the environment when a non-interactive password is required. The installer creates the schema and loads sample data; it skips grants unless `INSTALL_DB_GRANTS=true` is set after the three database accounts have been provisioned.
+**Important:** `database/01_schema.sql` drops and recreates the `usims` database. Back up any existing `usims` database before installation. The script uses the `mysql` client on `PATH`. Configure `DB_HOST`, `DB_PORT`, and `DB_INSTALL_USER` if your local server differs from the defaults. Set `DB_INSTALL_PASSWORD` in the environment when a non-interactive password is required. The installer creates the schema and loads sample data; it skips grants unless `INSTALL_DB_GRANTS=true` is set after the three database accounts have been provisioned.
 
 You can also run the SQL files individually in this order: `01_schema.sql`, `02_indexes.sql`, `03_views.sql`, `04_procedures.sql`, `05_triggers.sql`, `07_sample_data.sql`, and `10_programme_catalogue.sql`. Apply `06_security.sql` only after creating `sims_app`, `sims_admin`, and `sims_lecturer` with separate strong passwords. The `database/08_install.sql` master file uses relative `SOURCE` paths and must be invoked from the repository root:
 
